@@ -1,5 +1,5 @@
 // Service Worker for Accounting PWA - Network First
-const CACHE_NAME = 'accounting-pwa-v4';
+const CACHE_NAME = 'accounting-pwa-v5';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
