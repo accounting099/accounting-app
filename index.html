@@ -18,7 +18,7 @@
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
 
-  <!-- إعدادات رابط النظام المحاسبي السحابي -->
+  <!-- إعدادات رابط النظام المحاسبي (يتم تعديل الرابط من ملف config.js على GitHub) -->
   <script src="config.js"></script>
 
   <style>
@@ -108,152 +108,11 @@
       z-index: 1;
       background-color: #0b1748;
     }
-
-    /* شريط تثبيت PWA الذكي */
-    #pwaInstallBanner {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10000;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 1.5px solid #fbbf24;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
-      border-radius: 50px;
-      padding: 10px 18px;
-      align-items: center;
-      gap: 12px;
-      max-width: 90vw;
-      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes slideUp {
-      from { transform: translate(-50%, 60px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
-    }
-
-    .pwa-btn-install {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #0b1426;
-      border: none;
-      font-weight: bold;
-      font-size: 13.5px;
-      padding: 8px 18px;
-      border-radius: 30px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
-      white-space: nowrap;
-    }
-
-    .pwa-btn-close {
-      background: transparent;
-      border: none;
-      color: #94a3b8;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 4px 8px;
-      line-height: 1;
-    }
-
-    /* شاشة الإعداد إذا لم يتم ضبط الرابط */
-    #setupModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 13, 42, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 10001;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .setup-box {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 20px;
-      padding: 28px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
-    }
-
-    .setup-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #fbbf24;
-      margin-bottom: 12px;
-    }
-
-    .setup-desc {
-      font-size: 13.5px;
-      color: #cbd5e1;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .setup-input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #475569;
-      background: #0f172a;
-      color: #f8fafc;
-      font-size: 13px;
-      outline: none;
-      direction: ltr;
-      text-align: left;
-      margin-bottom: 16px;
-    }
-
-    .setup-input:focus {
-      border-color: #fbbf24;
-    }
-
-    .setup-save-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #0b1426;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 14.5px;
-      cursor: pointer;
-    }
-
-    /* زر الإعدادات الصغير في الزاوية */
-    #configGearBtn {
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 9998;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #94a3b8;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0.35;
-      transition: opacity 0.2s ease;
-    }
-
-    #configGearBtn:hover {
-      opacity: 1;
-    }
   </style>
 </head>
 <body>
 
-  <!-- شاشة التحميل / سبلاش سكرين -->
+  <!-- شاشة التحميل الأولية بهوية الشركة -->
   <div id="splashScreen">
     <img src="icon-192.png" alt="شعار النظام" class="splash-logo">
     <div class="splash-title">النظام المحاسبي المتكامل</div>
@@ -261,39 +120,16 @@
     <div class="splash-loader"></div>
   </div>
 
-  <!-- زر ضبط الرابط السري عند الحاجة -->
-  <button id="configGearBtn" onclick="openSetupModal()" title="إعدادات الرابط">⚙️</button>
-
-  <!-- إطار التطبيق الذي يعرض Google Apps Script -->
+  <!-- إطار التطبيق الرئيسي لكامل الشاشة -->
   <iframe 
     id="appFrame" 
     allow="clipboard-read; clipboard-write; camera; geolocation; microphone" 
     sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals allow-downloads allow-presentation">
   </iframe>
 
-  <!-- شريط التثبيت المباشر للهاتف والكمبيوتر -->
-  <div id="pwaInstallBanner">
-    <span style="font-size:18px;">📲</span>
-    <span style="font-size:13px;font-weight:600;color:#f8fafc;">تثبيت النظام كتطبيق على جهازك</span>
-    <button class="pwa-btn-install" onclick="triggerPwaInstall()">تثبيت الآن ⬇️</button>
-    <button class="pwa-btn-close" onclick="dismissInstallBanner()">&times;</button>
-  </div>
-
-  <!-- نافذة إعداد الرابط (تظهر لأول مرة فقط إذا لم يكن الرابط مسجلاً مسبقاً) -->
-  <div id="setupModal">
-    <div class="setup-box">
-      <div class="setup-title">⚙️ ضبط رابط النظام المحاسبي</div>
-      <div class="setup-desc">
-        يرجى لصق رابط الويب الخاص بنظامك من Google Apps Script (ينتهي بـ <code>/exec</code>):
-      </div>
-      <input type="url" id="gasUrlInput" class="setup-input" placeholder="https://script.google.com/macros/s/.../exec">
-      <button class="setup-save-btn" onclick="saveGasUrl()">حفظ وتشغيل النظام 🚀</button>
-    </div>
-  </div>
-
   <script>
     // ══════════════════════════════════════════════════════════════
-    // يمكنك كتابة رابط Google Apps Script الخاص بك هنا مباشرة:
+    // رابط النظام الافتراضي (يمكنك أيضاً تغييره مباشرة من ملف config.js على GitHub)
     // ══════════════════════════════════════════════════════════════
     const HARDCODED_GAS_URL = "https://script.google.com/macros/s/AKfycbzSPAsBOG1W1WsptbWcgS5Re-Q7pyU1DMkpjHr2k-IKtzK9AMdr8lzjx9_kUgvWw3Dw3Q/exec"; 
 
@@ -301,21 +137,11 @@
       if (window.APPS_SCRIPT_URL && window.APPS_SCRIPT_URL.trim().length > 10) {
         return window.APPS_SCRIPT_URL.trim();
       }
-      if (HARDCODED_GAS_URL && HARDCODED_GAS_URL.trim().length > 10) {
-        return HARDCODED_GAS_URL.trim();
-      }
-      return localStorage.getItem('mansoura_gas_url') || '';
+      return HARDCODED_GAS_URL;
     }
 
     function initApp() {
       const url = getAppUrl();
-      if (!url) {
-        document.getElementById('splashScreen').style.display = 'none';
-        openSetupModal();
-        return;
-      }
-
-      // تمرير أي معاملات إضافية (مثل mode=manager أو ticket=...)
       const currentParams = window.location.search;
       let finalUrl = url;
       if (currentParams) {
@@ -335,7 +161,7 @@
         }
       };
 
-      // مؤقت أمان في حال بطء الاستجابة
+      // مؤقت أمان في حال بطء استجابة السيرفر
       setTimeout(() => {
         const splash = document.getElementById('splashScreen');
         if (splash && splash.style.display !== 'none') {
@@ -345,70 +171,15 @@
       }, 7000);
     }
 
-    function openSetupModal() {
-      const cur = getAppUrl();
-      if (cur) document.getElementById('gasUrlInput').value = cur;
-      document.getElementById('setupModal').style.display = 'flex';
-    }
-
-    function saveGasUrl() {
-      const input = document.getElementById('gasUrlInput').value.trim();
-      if (!input || !input.startsWith('https://script.google.com/')) {
-        alert('يرجى إدخال رابط صحيح لـ Google Apps Script يبدأ بـ https://script.google.com/');
-        return;
-      }
-      localStorage.setItem('mansoura_gas_url', input);
-      document.getElementById('setupModal').style.display = 'none';
-      document.getElementById('splashScreen').style.display = 'flex';
-      document.getElementById('splashScreen').style.opacity = '1';
-      initApp();
-    }
-
-    // ══════════════════════════════════════════════════════════════
-    // تسجيل Service Worker لتمكين معايير PWA الرسمية والتثبيت
-    // ══════════════════════════════════════════════════════════════
+    // تسجيل Service Worker في الخلفية للحفاظ على معايير التطبيق المستقل
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then((reg) => console.log('PWA Service Worker registered:', reg.scope))
-          .catch((err) => console.error('PWA Service Worker failed:', err));
+          .catch(() => {});
       });
     }
 
-    // ══════════════════════════════════════════════════════════════
-    // التعامل مع حدث تثبيت التطبيق التلقائي (Chrome Android / PC)
-    // ══════════════════════════════════════════════════════════════
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const isDismissed = sessionStorage.getItem('pwa_banner_dismissed') === 'true';
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      if (!isDismissed && !isStandalone) {
-        document.getElementById('pwaInstallBanner').style.display = 'flex';
-      }
-    });
-
-    function triggerPwaInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            dismissInstallBanner();
-          }
-          deferredPrompt = null;
-        });
-      } else {
-        alert('لتثبيت التطبيق: اضغط على خيارات المتصفح (⋮) ثم اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".');
-      }
-    }
-
-    function dismissInstallBanner() {
-      document.getElementById('pwaInstallBanner').style.display = 'none';
-      try { sessionStorage.setItem('pwa_banner_dismissed', 'true'); } catch(e) {}
-    }
-
-    // بدء تشغيل التطبيق
+    // تشغيل النظام فور جاهزية الصفحة
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
