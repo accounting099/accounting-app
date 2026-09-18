@@ -123,7 +123,7 @@
   <iframe 
     id="appFrame" 
     allow="clipboard-read; clipboard-write; camera; geolocation; microphone" 
-    sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals allow-downloads allow-presentation">
+    sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-modals allow-downloads allow-presentation allow-top-navigation-by-user-activation">
   </iframe>
 
   <script>
@@ -178,12 +178,18 @@
       });
     }
 
-    // استقبال إشارة إعادة تحميل التطبيق من داخل الإطار
+    // استقبال إشارة إعادة تحميل التطبيق أو تسجيل الخروج من داخل الإطار
     window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'APP_RELOAD_IFRAME' && event.data.url) {
+      if (event.data && (event.data.type === 'APP_RELOAD_IFRAME' || event.data.type === 'APP_LOGOUT')) {
         const frame = document.getElementById('appFrame');
         if (frame) {
-          frame.src = event.data.url;
+          const splash = document.getElementById('splashScreen');
+          if (splash) {
+            splash.style.display = 'flex';
+            splash.style.opacity = '1';
+          }
+          const targetUrl = event.data.url || getAppUrl();
+          frame.src = targetUrl;
         }
       }
     });
