@@ -18,6 +18,9 @@
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
 
+  <!-- إعدادات رابط النظام المحاسبي السحابي -->
+  <script src="config.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -292,9 +295,12 @@
     // ══════════════════════════════════════════════════════════════
     // يمكنك كتابة رابط Google Apps Script الخاص بك هنا مباشرة:
     // ══════════════════════════════════════════════════════════════
-    const HARDCODED_GAS_URL = ""; 
+    const HARDCODED_GAS_URL = "https://script.google.com/macros/s/AKfycbzSPAsBOG1W1WsptbWcgS5Re-Q7pyU1DMkpjHr2k-IKtzK9AMdr8lzjx9_kUgvWw3Dw3Q/exec"; 
 
     function getAppUrl() {
+      if (window.APPS_SCRIPT_URL && window.APPS_SCRIPT_URL.trim().length > 10) {
+        return window.APPS_SCRIPT_URL.trim();
+      }
       if (HARDCODED_GAS_URL && HARDCODED_GAS_URL.trim().length > 10) {
         return HARDCODED_GAS_URL.trim();
       }
