@@ -1,5 +1,5 @@
 // Service Worker for Accounting PWA Wrapper
-const CACHE_NAME = 'accounting-pwa-v1';
+const CACHE_NAME = 'accounting-pwa-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -36,6 +36,14 @@ self.addEventListener('fetch', (event) => {
   // If request is for Google Apps Script, always fetch from network
   if (url.origin.includes('google.com') || url.origin.includes('googleusercontent.com')) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Always fetch config.js live so URL updates take effect immediately
+  if (url.pathname.endsWith('config.js')) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
     return;
   }
 
