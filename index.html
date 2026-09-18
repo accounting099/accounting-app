@@ -178,6 +178,16 @@
       });
     }
 
+    // استقبال إشارة إعادة تحميل التطبيق من داخل الإطار
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'APP_RELOAD_IFRAME' && event.data.url) {
+        const frame = document.getElementById('appFrame');
+        if (frame) {
+          frame.src = event.data.url;
+        }
+      }
+    });
+
     // تشغيل النظام فور جاهزية الصفحة
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
