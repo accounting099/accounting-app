@@ -180,7 +180,25 @@
 
     // استقبال إشارة إعادة تحميل التطبيق أو تسجيل الخروج من داخل الإطار
     window.addEventListener('message', (event) => {
-      if (event.data && (event.data.type === 'APP_RELOAD_IFRAME' || event.data.type === 'APP_LOGOUT')) {
+      if (!event.data) return;
+      if (event.data.type === 'APP_LOGOUT') {
+        // تم التبديل المباشر لشاشة تسجيل الدخول داخل الإطار بدون إعادة تحميل وبدون شاشة زرقاء
+        try {
+          const u = new URL(window.location.href);
+          u.searchParams.delete('token');
+          u.searchParams.delete('ticket');
+          u.searchParams.delete('mode');
+          u.searchParams.delete('_r');
+          window.history.replaceState(null, 'النظام المحاسبي | تسجيل الدخول', u.pathname + (u.search ? u.search : ''));
+        } catch(e){}
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => { splash.style.display = 'none'; }, 200);
+        }
+        return;
+      }
+      if (event.data.type === 'APP_RELOAD_IFRAME') {
         const frame = document.getElementById('appFrame');
         if (frame) {
           const splash = document.getElementById('splashScreen');
@@ -188,8 +206,21 @@
             splash.style.display = 'flex';
             splash.style.opacity = '1';
           }
-          const targetUrl = event.data.url || getAppUrl();
-          frame.src = targetUrl;
+          const dismissSplash = () => {
+            if (splash) {
+              splash.style.opacity = '0';
+              setTimeout(() => { splash.style.display = 'none'; }, 400);
+            }
+          };
+          frame.onload = dismissSplash;
+          setTimeout(dismissSplash, 2500);
+
+          let targetUrl = event.data.url || getAppUrl();
+          if (typeof targetUrl !== 'string' || targetUrl.includes('googleusercontent.com')) {
+            targetUrl = getAppUrl();
+          }
+          const sep = targetUrl.includes('?') ? '&' : '?';
+          frame.src = targetUrl + sep + '_r=' + Date.now();
         }
       }
     });
