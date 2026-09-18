@@ -108,47 +108,6 @@
       z-index: 1;
       background-color: #0b1748;
     }
-
-    /* زر التحديث السريع (Refresh) الذكي */
-    #refreshAppBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 99999;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(11, 23, 72, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1.5px solid rgba(251, 191, 36, 0.45);
-      color: #fbbf24;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-      cursor: pointer;
-      opacity: 0.8;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    #refreshAppBtn:hover, #refreshAppBtn:active {
-      opacity: 1;
-      transform: scale(1.08);
-      background: rgba(15, 23, 42, 0.95);
-      border-color: #fbbf24;
-      box-shadow: 0 10px 28px rgba(251, 191, 36, 0.35);
-    }
-
-    .spin-active {
-      animation: spinRefresh 0.75s linear infinite !important;
-    }
-
-    @keyframes spinRefresh {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
   </style>
 </head>
 <body>
@@ -160,13 +119,6 @@
     <div class="splash-subtitle">شركة المنصورة للراتنجات والصناعات الكيماوية</div>
     <div class="splash-loader"></div>
   </div>
-
-  <!-- زر تحديث النظام السريع الذكي (Refresh) لجلب أحدث إصدار -->
-  <button type="button" id="refreshAppBtn" onclick="refreshApp()" title="تحديث النظام لجلب آخر التعديلات" aria-label="تحديث">
-    <svg id="refreshIcon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-    </svg>
-  </button>
 
   <!-- إطار التطبيق الرئيسي لكامل الشاشة -->
   <iframe 
@@ -217,49 +169,6 @@
           setTimeout(() => { splash.style.display = 'none'; }, 500);
         }
       }, 7000);
-    }
-
-    // ══════════════════════════════════════════════════════════════
-    // وظيفة زر التحديث الذكي: تنظيف الكاش وجلب أحدث كود فوراً
-    // ══════════════════════════════════════════════════════════════
-    function refreshApp() {
-      const icon = document.getElementById('refreshIcon');
-      if (icon) icon.classList.add('spin-active');
-
-      const splash = document.getElementById('splashScreen');
-      if (splash) {
-        const subtitle = splash.querySelector('.splash-subtitle');
-        if (subtitle) subtitle.textContent = 'جاري جلب أحدث تحديث للنظام...';
-        splash.style.display = 'flex';
-        setTimeout(() => { splash.style.opacity = '1'; }, 20);
-      }
-
-      // مسح كاش المتصفح تلقائياً
-      if ('caches' in window) {
-        caches.keys().then((names) => {
-          names.forEach((name) => caches.delete(name));
-        });
-      }
-
-      // إعادة قراءة config.js برقم زمني لمنع التخزين المؤقت
-      const script = document.createElement('script');
-      script.src = 'config.js?_ts=' + Date.now();
-      const doReload = () => {
-        const url = getAppUrl();
-        const separator = url.includes('?') ? '&' : '?';
-        const freshUrl = url + separator + '_refresh=' + Date.now();
-        const frame = document.getElementById('appFrame');
-        if (frame) {
-          frame.src = freshUrl;
-        }
-      };
-      script.onload = doReload;
-      script.onerror = doReload;
-      document.head.appendChild(script);
-
-      setTimeout(() => {
-        if (icon) icon.classList.remove('spin-active');
-      }, 1500);
     }
 
     // تسجيل Service Worker في الخلفية للحفاظ على معايير التطبيق المستقل
