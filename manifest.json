@@ -21,5 +21,35 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "إضافة حركة جديدة",
+      "short_name": "إضافة حركة",
+      "description": "تسجيل قيد أو حركة يومية جديدة فوراً",
+      "url": "./#entry",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "كشف الحساب والأرصدة",
+      "short_name": "كشف حساب",
+      "description": "عرض أرصدة الحسابات وكشوف الحساب",
+      "url": "./#statement",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "التقارير المالية والموازين",
+      "short_name": "التقارير",
+      "description": "عرض ميزان المراجعة وقائمة الدخل والأرباح",
+      "url": "./#reports",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "متابعة أوراق القبض والشيكات",
+      "short_name": "الشيكات",
+      "description": "متابعة أوراق القبض والشيكات المستحقة",
+      "url": "./#checks",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }
