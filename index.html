@@ -229,11 +229,26 @@
             }
           };
           frame.onload = dismissSplash;
-          setTimeout(dismissSplash, 2500);
+          setTimeout(dismissSplash, 7000);
+
+          if (event.data.clearCache && 'caches' in window) {
+            try {
+              caches.keys().then(keys => {
+                keys.forEach(k => {
+                  if (k !== 'accounting-pwa-v7') caches.delete(k);
+                });
+              }).catch(() => {});
+            } catch(e){}
+          }
 
           let targetUrl = event.data.url || getAppUrl();
           if (typeof targetUrl !== 'string' || targetUrl.includes('googleusercontent.com')) {
             targetUrl = getAppUrl();
+            const currentParams = window.location.search;
+            if (currentParams) {
+              const separator = targetUrl.includes('?') ? '&' : '?';
+              targetUrl = targetUrl + separator + currentParams.substring(1);
+            }
           }
           const sep = targetUrl.includes('?') ? '&' : '?';
           frame.src = targetUrl + sep + '_r=' + Date.now();
