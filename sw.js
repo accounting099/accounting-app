@@ -1,15 +1,31 @@
-// Service Worker for Accounting PWA - Network First
-const CACHE_NAME = 'accounting-pwa-v5';
+// Service Worker for Accounting PWA - App Shell & Smart Cache
+const CACHE_NAME = 'accounting-pwa-v7';
+const STATIC_SHELL_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './config.js',
+  './icon-192.png',
+  './icon-512.png'
+];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_SHELL_ASSETS).catch(() => {});
+    }).then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     }).then(() => self.clients.claim())
   );
@@ -18,28 +34,39 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Always fetch Google Apps Script from network
+  // Always fetch Google Apps Script backend and APIs directly from network
   if (url.origin.includes('google.com') || url.origin.includes('googleusercontent.com')) {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  // Network-first for page navigation and config so updates appear instantly
+  // Stale-While-Revalidate for local shell and config to launch instantly (< 1s)
   if (event.request.mode === 'navigate' || url.pathname.endsWith('config.js') || url.pathname.endsWith('index.html')) {
     event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
+      caches.match(event.request).then((cachedResponse) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
           return networkResponse;
-        })
-        .catch(() => caches.match(event.request))
+        }).catch(() => cachedResponse);
+        return cachedResponse || fetchPromise;
+      })
     );
     return;
   }
 
-  // Cache for icons
+  // Cache-first for icons and static media
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request);
+      return cachedResponse || fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      });
     })
   );
 });
