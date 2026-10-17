@@ -142,10 +142,14 @@
     function initApp() {
       const url = getAppUrl();
       const currentParams = window.location.search;
+      const currentHash = window.location.hash;
       let finalUrl = url;
       if (currentParams) {
         const separator = finalUrl.includes('?') ? '&' : '?';
         finalUrl = finalUrl + separator + currentParams.substring(1);
+      }
+      if (currentHash) {
+        finalUrl = finalUrl + currentHash;
       }
 
       const frame = document.getElementById('appFrame');
@@ -170,6 +174,16 @@
       }, 7000);
     }
 
+    // تمرير التغييرات في عنوان URL إلى داخل الإطار
+    window.addEventListener('hashchange', () => {
+      const frame = document.getElementById('appFrame');
+      if (frame && window.location.hash) {
+        try {
+          frame.contentWindow.location.hash = window.location.hash;
+        } catch(e){}
+      }
+    });
+
     // تسجيل Service Worker في الخلفية للحفاظ على معايير التطبيق المستقل
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -178,9 +192,11 @@
       });
     }
 
-    // استقبال إشارة إعادة تحميل التطبيق أو تسجيل الخروج من داخل الإطار
+    // استقبال إشارة إعادة تحميل التطبيق أو تسجيل الخروج من داخل الإطار مع فحص المصدر
     window.addEventListener('message', (event) => {
       if (!event.data) return;
+      const isTrustedOrigin = !event.origin || event.origin.endsWith('script.google.com') || event.origin.endsWith('googleusercontent.com') || event.origin === window.location.origin;
+      if (!isTrustedOrigin) return;
       if (event.data.type === 'APP_LOGOUT') {
         // تم التبديل المباشر لشاشة تسجيل الدخول داخل الإطار بدون إعادة تحميل وبدون شاشة زرقاء
         try {
